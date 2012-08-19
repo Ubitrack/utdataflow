@@ -131,15 +131,15 @@ void PushSupplierCore< EventType >::send( const EventType& rEvent )
 	// create list of events for each consumer
 	std::vector< EventQueue::QueueData > events;
 	for ( typename ConsumerList::iterator it = m_pushConsumers.begin(); it != m_pushConsumers.end(); it++ ) {
-		/*
+		
 		events.push_back( EventQueue::QueueData( &(*it)->getReceiverInfo(), boost::bind( (*it)->getSlot(), EventType( rEvent ) ),
 			EventTypeTraits< EventType >().getPriority( rEvent ) + (*it)->getPort().getComponent().getEventPriority() ) );		
-			*/
-		(*it)->getSlot()(EventType( rEvent ));
+			
+		//(*it)->getSlot()(EventType( rEvent ));
 	}
 	
 	// enqueue it all in one go
-	//EventQueue::singleton().queue( events );
+	EventQueue::singleton().queue( events );
 }
 
 
