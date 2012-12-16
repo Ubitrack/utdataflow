@@ -63,21 +63,8 @@ EventQueue& EventQueue::singleton()
 	return *g_pEventQueue;
 }
 
-void EventQueue::addRefToEventQueue()
-{
-   ++g_RefEventQueue;
-}
-
-void EventQueue::removeRefToEventQueue()
-{
-	--g_RefEventQueue;
-	if(g_RefEventQueue > 0)
-		return;
-
-    // race condition between network receiving thread and main thread
-    static boost::mutex singletonMutex;
-    boost::mutex::scoped_lock l( singletonMutex );
-
+void EventQueue::destroyEventQueue()
+{	
 	g_pEventQueue.reset( 0 );
 }
 

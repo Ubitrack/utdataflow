@@ -38,6 +38,7 @@
 #include <boost/bind.hpp>
 #include <utUtil/Exception.h>
 
+
 #include "Port.h"
 #include "Component.h"
 #include "PushConsumer.h"
@@ -99,13 +100,13 @@ template< class EventType > template< class OtherSide >
 void PushSupplierCore< EventType >::addPushConsumer( OtherSide& rConsumer )
 {
 	try
-	{
+	{				
 		PushConsumerCore< EventType >& rTyped( dynamic_cast< PushConsumerCore< EventType >& >( rConsumer ) );
 		m_pushConsumers.push_back( &rTyped );
 	}
-	catch ( const std::bad_cast& )
+	catch ( const std::bad_cast& e)
 	{
-		UBITRACK_THROW( "PushSupplier can only connect to a PushConsumer of equal EventType" );
+		UBITRACK_THROW( "PushSupplier can only connect to a PushConsumer of equal EventType: " + std::string(typeid(this).name()) + " to " + std::string(typeid(rConsumer).name()));
 	}
 }
 
@@ -135,7 +136,6 @@ void PushSupplierCore< EventType >::send( const EventType& rEvent )
 		events.push_back( EventQueue::QueueData( &(*it)->getReceiverInfo(), boost::bind( (*it)->getSlot(), EventType( rEvent ) ),
 			EventTypeTraits< EventType >().getPriority( rEvent ) + (*it)->getPort().getComponent().getEventPriority() ) );		
 			
-		//(*it)->getSlot()(EventType( rEvent ));
 	}
 	
 	// enqueue it all in one go

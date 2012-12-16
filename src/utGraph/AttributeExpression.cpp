@@ -30,7 +30,7 @@
  */
 
 #include <assert.h>
-
+#include "../utDataflow.h"
 #include "AttributeExpression.h"
 #include "KeyValueAttributes.h"
 #include "UTQLSubgraph.h"

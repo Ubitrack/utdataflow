@@ -262,7 +262,7 @@ namespace Ubitrack { namespace Dataflow {
 		// know which protocol (push/pull) is involved
 		try
 		{
-			srcPort->connect (*dstPort);
+			srcPort->connect (*dstPort);			
 			try
 			{
 				dstPort->connect (*srcPort);

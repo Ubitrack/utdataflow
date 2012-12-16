@@ -147,8 +147,7 @@ public:
 	/** get the main eventqueue object */
 	static EventQueue& singleton();
 
-	static void addRefToEventQueue();
-	static void removeRefToEventQueue();
+	static void destroyEventQueue();	
 
 protected:
 	/** queue thread function */
