@@ -61,15 +61,18 @@ libs = setupLibraryBuild(env, sources, libName, libName)
 
 # e)
 # clear all 3rd-party dependencies in the case of linking against ubitrack.dll
+utdataflow_all_options = utdataflow_options.copy()
 utdataflow_options[ 'LIBS' ] = []
 utdataflow_options[ 'LIBPATH' ] = []
 # add the ubitrack library to the link options.
 utdataflow_options[ 'LIBS' ] += libs
 utdataflow_options[ 'LIBPATH' ] += [ install_library_prefix ]
 
+utdataflow_all_options[ 'LIBS' ] += libs
+utdataflow_all_options[ 'LIBPATH' ] += [ install_library_prefix ]
 # f)
 have_utdataflow = True
-Export( 'utdataflow_options', 'have_utdataflow' )
+Export( 'utdataflow_options', 'have_utdataflow', 'utdataflow_all_options' )
 
 # also create a visual studio project for the library	
 createVisualStudioProject(env, sources, headers, libName)
