@@ -42,7 +42,7 @@ extra_options = {}
 extra_options[ 'LIBS' ] = boost_libs( [ 'thread', 'system', 'filesystem', 'regex' ] )
 
 # Merge all options in one "ubitrack" option. Note that some options might be empty if its module is not available	
-utdataflow_options = mergeOptions( boost_options, opencv_options, tinyxml_options, utcore_options, utvision_options, log4cpp_options, lapack_options, extra_options)
+utdataflow_options = mergeOptions( utcore_all_options, extra_options)
 # Set ubitrack root source path explicitly that allows sources to access header files relative with #include <..> statements
 utdataflow_options ['CPPPATH'] += [ getCurrentPath() ]
 
