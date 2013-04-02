@@ -26,8 +26,6 @@ Import( '*' )
 
 
 # a)
-env = masterEnv.Clone()
-
 subdirs = [ 'utDataflow', 'utGraph', 'utClientServer' ]
 headers = globSourceFiles( '*.h' )
 sources = globSourceFiles( '*.cpp' )
@@ -38,6 +36,8 @@ for dir in subdirs:
 
 # b)	
 # setup compiler and linker flags
+env = masterEnv.Clone()
+
 extra_options = {}
 extra_options[ 'LIBS' ] = boost_libs( [ 'thread', 'system', 'filesystem', 'regex' ] )
 
