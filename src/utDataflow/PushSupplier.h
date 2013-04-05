@@ -104,7 +104,7 @@ void PushSupplierCore< EventType >::addPushConsumer( OtherSide& rConsumer )
 		PushConsumerCore< EventType >& rTyped( dynamic_cast< PushConsumerCore< EventType >& >( rConsumer ) );
 		m_pushConsumers.push_back( &rTyped );
 	}
-	catch ( const std::bad_cast& e)
+	catch ( const std::bad_cast& )
 	{
 		UBITRACK_THROW( "PushSupplier can only connect to a PushConsumer of equal EventType: " + std::string(typeid(this).name()) + " to " + std::string(typeid(rConsumer).name()));
 	}
