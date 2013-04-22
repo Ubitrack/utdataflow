@@ -66,13 +66,19 @@ namespace Ubitrack { namespace Dataflow {
 #endif
 
 			// check if file of suitable extension
+#if BOOST_FILESYSTEM_VERSION == 3
+			if ( exists( p ) && !is_directory( p ) && p.leaf().string().size() >= compSuffix.size() &&
+				 !p.leaf().string().compare( p.leaf().string().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
+#else
 			if ( exists( p ) && !is_directory( p ) && p.leaf().size() >= compSuffix.size() &&
 				 !p.leaf().compare( p.leaf().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
+#endif
 			{
 				LOG4CPP_INFO( logger, "Loading driver: " << p.leaf() );
 				std::string sCompPath;
-#ifdef BOOST_FILESYSTEM_I18N
-				sCompPath = p.file_string();
+#if BOOST_FILESYSTEM_VERSION == 3
+				//file_string is Deprecated 
+				sCompPath = p.string();
 #else
 				sCompPath = p.native_file_string();
 #endif
