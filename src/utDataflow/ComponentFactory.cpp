@@ -47,7 +47,7 @@ namespace Ubitrack { namespace Dataflow {
 		// check component directory
 		LOG4CPP_INFO( logger, "Looking for components in " << sComponentDir );
 		using namespace boost::filesystem;
-		path compPath( sComponentDir.c_str(), native );
+		path compPath( sComponentDir.c_str() );
 		if ( !exists( compPath ) )
 			UBITRACK_THROW( "Component directory \"" + sComponentDir + "\" does not exist" );
 		
@@ -66,16 +66,12 @@ namespace Ubitrack { namespace Dataflow {
 #endif
 
 			// check if file of suitable extension
-			if ( exists( p ) && !is_directory( p ) && p.leaf().size() >= compSuffix.size() &&
-				 !p.leaf().compare( p.leaf().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
+			if ( exists( p ) && !is_directory( p ) && p.filename().string().size() >= compSuffix.size() &&
+				 !p.filename().string().compare( p.filename().string().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
 			{
-				LOG4CPP_INFO( logger, "Loading driver: " << p.leaf() );
+				LOG4CPP_INFO( logger, "Loading driver: " << p.filename() );
 				std::string sCompPath;
-#ifdef BOOST_FILESYSTEM_I18N
-				sCompPath = p.file_string();
-#else
-				sCompPath = p.native_file_string();
-#endif
+				sCompPath = p.string();
 
 				lt_dlhandle tmp = lt_dlopenext( sCompPath.c_str() );
 				if ( tmp == 0 )

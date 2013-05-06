@@ -33,12 +33,13 @@
 //#define BOOST_SPIRIT_DUMP_XML
 
 #include <algorithm>
-#include <boost/spirit.hpp>
-#include <boost/spirit/utility/grammar_def.hpp> 
-#include <boost/spirit/tree/ast.hpp>
+#include <boost/spirit/include/classic_spirit.hpp>
+#include <boost/spirit/include/classic_grammar_def.hpp> 
+#include <boost/spirit/include/classic_grammar.hpp> 
+#include <boost/spirit/include/classic_ast.hpp>
 #ifdef BOOST_SPIRIT_DUMP_XML
 #include <string.h>
-#include <boost/spirit/tree/tree_to_xml.hpp>
+#include <boost/spirit/include/classic_tree_to_xml.hpp>
 #endif
 
 #include <utUtil/Exception.h>
