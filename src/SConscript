@@ -24,6 +24,10 @@ Import( '*' )
 # The use of options and possibility to export them makes hierarchical build environments
 # obsolete. Avoid exporting new environments to the build system.
 
+if not have_utcore:
+	have_utdataflow = False
+	Export( 'have_utdataflow' )
+	Return( 'have_utdataflow' )
 
 # a)
 subdirs = [ 'utDataflow', 'utGraph', 'utClientServer' ]

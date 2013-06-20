@@ -47,7 +47,11 @@ namespace Ubitrack { namespace Dataflow {
 		// check component directory
 		LOG4CPP_INFO( logger, "Looking for components in " << sComponentDir );
 		using namespace boost::filesystem;
+#if BOOST_FILESYSTEM_VERSION == 3
+		path compPath( sComponentDir.c_str() );
+#else
 		path compPath( sComponentDir.c_str(), native );
+#endif
 		if ( !exists( compPath ) )
 			UBITRACK_THROW( "Component directory \"" + sComponentDir + "\" does not exist" );
 		

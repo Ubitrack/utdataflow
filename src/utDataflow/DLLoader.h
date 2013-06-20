@@ -98,8 +98,11 @@
 		inline int lt_dlclose( lt_dlhandle handle ) { return dlclose( handle ); }
 
 		inline lt_ptr lt_dlsym( lt_dlhandle handle, const char* name ) { return dlsym( handle, name ); }
-
+#ifdef ANDROID
+		inline const char* lt_dlerror() { return dlerror(); }
+#else
 		inline char* lt_dlerror() { return dlerror(); }
+#endif
 
 	}
 
