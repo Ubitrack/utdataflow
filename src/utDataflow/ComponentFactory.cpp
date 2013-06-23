@@ -52,33 +52,41 @@ namespace Ubitrack { namespace Dataflow {
 #else
 		path compPath( sComponentDir.c_str(), native );
 #endif
-		if ( !exists( compPath ) )
+		if ( !exists( compPath ) ){
+			LOG4CPP_ERROR(logger, "Component directory does not exist" )
 			UBITRACK_THROW( "Component directory \"" + sComponentDir + "\" does not exist" );
+		}
 		
 		// initialize the ltdl library
-		if ( lt_dlinit() != 0 )
+		if ( lt_dlinit() != 0 ){
+			LOG4CPP_ERROR(logger, "libltdl::lt_dlinit() failed: " )
 			UBITRACK_THROW( "libltdl::lt_dlinit() failed: " + std::string( lt_dlerror() ) );
+		}
 
+		char* libsnames[20] ={"libApplicationPullSink_x86.so", "libApplicationPushSink_x86.so", "libApplicationPushSource_x86.so", "libTestSource_x86.so"};
 		// iterate directory
 		directory_iterator dirEnd;
 		for ( directory_iterator it( compPath ); it != dirEnd; it++ )
+		//for ( int i=0;i<4;i++)
 		{
 #ifdef BOOST_FILESYSTEM_I18N
 			path p( it->path() );
 #else
 			path p( *it );
 #endif
-
+			//path p(libsnames[i]);
+			//p = compPath / p;
 			// check if file of suitable extension
 #if BOOST_FILESYSTEM_VERSION == 3
-			if ( exists( p ) && !is_directory( p ) && p.leaf().string().size() >= compSuffix.size() &&
-				 !p.leaf().string().compare( p.leaf().string().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
+			//if ( exists( p ) && !is_directory( p ) && p.leaf().string().size() >= compSuffix.size() &&
+			//	 !p.leaf().string().compare( p.leaf().string().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
 #else
 			if ( exists( p ) && !is_directory( p ) && p.leaf().size() >= compSuffix.size() &&
 				 !p.leaf().compare( p.leaf().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
 #endif
 			{
 				LOG4CPP_INFO( logger, "Loading driver: " << p.leaf() );
+
 				std::string sCompPath;
 #if BOOST_FILESYSTEM_VERSION == 3
 				//file_string is Deprecated 
@@ -86,7 +94,6 @@ namespace Ubitrack { namespace Dataflow {
 #else
 				sCompPath = p.native_file_string();
 #endif
-
 				lt_dlhandle tmp = lt_dlopenext( sCompPath.c_str() );
 				if ( tmp == 0 )
 				{

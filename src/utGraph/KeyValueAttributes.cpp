@@ -89,11 +89,14 @@ namespace Ubitrack { namespace Graph {
 	
 	std::string KeyValueAttributes::getAttributeString( const std::string& key ) const
 	{
+
 		AttributeMapType::const_iterator it = m_Values.find( key );
 		if ( it == m_Values.end() )
-			return std::string();
-
+		{
+			return std::string();			
+		}
 		return it->second.getText();
+
 	}
 	
 
