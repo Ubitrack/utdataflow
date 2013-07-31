@@ -63,7 +63,6 @@ namespace Ubitrack { namespace Dataflow {
 			UBITRACK_THROW( "libltdl::lt_dlinit() failed: " + std::string( lt_dlerror() ) );
 		}
 
-		char* libsnames[20] ={"libApplicationPullSink_x86.so", "libApplicationPushSink_x86.so", "libApplicationPushSource_x86.so", "libTestSource_x86.so"};
 		// iterate directory
 		directory_iterator dirEnd;
 		for ( directory_iterator it( compPath ); it != dirEnd; it++ )
@@ -74,12 +73,10 @@ namespace Ubitrack { namespace Dataflow {
 #else
 			path p( *it );
 #endif
-			//path p(libsnames[i]);
-			//p = compPath / p;
 			// check if file of suitable extension
 #if BOOST_FILESYSTEM_VERSION == 3
-			//if ( exists( p ) && !is_directory( p ) && p.leaf().string().size() >= compSuffix.size() &&
-			//	 !p.leaf().string().compare( p.leaf().string().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
+			if ( exists( p ) && !is_directory( p ) && p.leaf().string().size() >= compSuffix.size() &&
+				 !p.leaf().string().compare( p.leaf().string().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
 #else
 			if ( exists( p ) && !is_directory( p ) && p.leaf().size() >= compSuffix.size() &&
 				 !p.leaf().compare( p.leaf().size() - compSuffix.size(), compSuffix.size(), compSuffix ) )
