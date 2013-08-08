@@ -33,20 +33,41 @@
 //#define BOOST_SPIRIT_DUMP_XML
 
 #include <algorithm>
+
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 104900
+
+#include <boost/spirit/include/classic.hpp>
+#include <boost/spirit/include/classic_grammar.hpp>
+#include <boost/spirit/include/classic_grammar_def.hpp>
+#include <boost/spirit/include/classic_ast.hpp>
+#ifdef BOOST_SPIRIT_DUMP_XML
+#include <string.h>
+#include <boost/spirit/include/classic_tree_to_xml.hpp>
+#endif
+
+#else
+
 #include <boost/spirit.hpp>
-#include <boost/spirit/utility/grammar_def.hpp> 
+#include <boost/spirit/utility/grammar_def.hpp>
 #include <boost/spirit/tree/ast.hpp>
 #ifdef BOOST_SPIRIT_DUMP_XML
 #include <string.h>
 #include <boost/spirit/tree/tree_to_xml.hpp>
 #endif
 
+#endif
+
 #include <utUtil/Exception.h>
 #include "PredicateParser.h"
 #include "AttributeExpression.h"
 
+#if BOOST_VERSION >= 104900
+namespace spirit = BOOST_SPIRIT_CLASSIC_NS;
+#else
 namespace spirit = boost::spirit;
- 
+#endif
+
 namespace Ubitrack { namespace Graph {
 
 // define anonymous namespace for implementation details
