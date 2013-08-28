@@ -55,8 +55,9 @@ static const int g_defaultMaxQueueLength =
 template< typename T >
 struct EventTypeTraits
 {
-	unsigned long long getPriority( const T& ) const
-	{ return Measurement::now(); }
+	unsigned long long getPriority( const T& m) const
+	//{ return Measurement::now(); }
+	{ return m.time(); }
 
 	int getMaxQueueLength() const
 	{ return g_defaultMaxQueueLength; }
