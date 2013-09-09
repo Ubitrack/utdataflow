@@ -204,9 +204,9 @@ namespace Ubitrack { namespace Graph {
 						// if no selection expression is specified, we prefer the solution with the lowest (!) 
 						// number of involved sensors, causing the least processing overhead...
 						#if DEFAULT_BEST_MATCH_SELECTION == BMS_SELECT_LEAST_SOURCES
-							double cost = it->m_informationSources.size();
+							double cost = static_cast< double >( it->m_informationSources.size() );
 						#elif DEFAULT_BEST_MATCH_SELECTION == BMS_SELECT_MOST_SOURCES
-							double cost = -it->m_informationSources.size();
+							double cost = -static_cast< double >( it->m_informationSources.size() );
 						#endif
 						
 						try
