@@ -36,6 +36,7 @@
 #define __Ubitrack_Dataflow_EventTypeTraits_INCLUDED__
 
 #include <utMeasurement/Timestamp.h>
+#include <utMeasurement/Measurement.h>
 
 namespace Ubitrack { namespace Dataflow {
 
@@ -56,11 +57,43 @@ template< typename T >
 struct EventTypeTraits
 {
 	unsigned long long getPriority( const T& m) const
-	//{ return Measurement::now(); }
+	{ return Measurement::now(); }
+	
+	int getMaxQueueLength() const
+	{ return g_defaultMaxQueueLength; }
+};
+
+// traits that tell the event queue how to treat measurements
+// PaF: Before this was in the Measurement.h of utCore
+// since the core is now indepentend of the dataflow this had to move somewhere else
+
+/**
+ * \internal
+ * Defines how to extract the priority out of a data type.
+ * For measurements, take the measurement time.
+ */
+template< typename T >
+struct EventTypeTraits< Measurement::Measurement< T > >
+{
+	unsigned long long getPriority( const Measurement::Measurement< T >& m ) const
 	{ return m.time(); }
 
 	int getMaxQueueLength() const
 	{ return g_defaultMaxQueueLength; }
+};
+
+/**
+ * \internal
+ * Button events may not be dropped.
+ */
+template<>
+struct EventTypeTraits< Measurement::Button >
+{
+	unsigned long long getPriority( const Measurement::Button& m ) const
+	{ return m.time(); }
+
+	int getMaxQueueLength() const
+	{ return -1; } // unlimited queue length
 };
 
 } } // namespace Ubitrack::Dataflow
