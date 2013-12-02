@@ -181,7 +181,7 @@ AttributeValue AttributeExpressionFunction::evaluate( const EvaluationContext& c
 		// arg 3*i+3: dt, the time between measurements
 		// arg 3*i+4: r, the measurement variance
 
-		Math::Matrix< 4, 4 > psiSum( ublas::zero_matrix< double >( 4, 4 ) );
+		Math::Matrix< 4, 4, double > psiSum( Math::Matrix< 4, 4, double >::zeros( ) );
 		double q = m_children[ 0 ]->evaluate( c ).getNumber();
 
 		for ( unsigned startArg = 1; startArg < m_children.size(); startArg += 3 )
