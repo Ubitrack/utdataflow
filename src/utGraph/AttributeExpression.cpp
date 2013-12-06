@@ -239,7 +239,7 @@ AttributeValue AttributeExpressionFunction::evaluate( const EvaluationContext& c
 
 		// compute complex eigenvalues of psiSum;
 		typedef	Math::Matrix< 0, 0, std::complex< double > > ComplexMat;
-		Math::Vector< 0, std::complex< double > > eigenvalues( 4 );
+		Math::Vector< std::complex< double > > eigenvalues( 4 );
 		ComplexMat eigenvectors( 4, 4 );
 		if ( lapack::geev( psiSum, eigenvalues, (ComplexMat*)0, &eigenvectors, lapack::optimal_workspace() ) != 0 )
 			UBITRACK_THROW( "singular matrix" );
@@ -249,7 +249,7 @@ AttributeValue AttributeExpressionFunction::evaluate( const EvaluationContext& c
 		ublas::matrix_range< ComplexMat > C( eigenvectors, ublas::range( 2, 4 ), ublas::range( 0, 2 ) );
 
 		// invert C
-		Math::Vector< 0, int > ipiv( 2 );
+		Math::Vector< int > ipiv( 2 );
 		if ( lapack::getrf( C, ipiv ) != 0 )
 			UBITRACK_THROW( "singular matrix" );
 		lapack::getri( C, ipiv );
