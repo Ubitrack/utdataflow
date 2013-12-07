@@ -181,12 +181,12 @@ AttributeValue AttributeExpressionFunction::evaluate( const EvaluationContext& c
 		// arg 3*i+3: dt, the time between measurements
 		// arg 3*i+4: r, the measurement variance
 
-		Math::Matrix< 4, 4, double > psiSum( Math::Matrix< 4, 4, double >::zeros( ) );
+		Math::Matrix< double, 4, 4 > psiSum( Math::Matrix< double, 4, 4 >::zeros( ) );
 		double q = m_children[ 0 ]->evaluate( c ).getNumber();
 
 		for ( unsigned startArg = 1; startArg < m_children.size(); startArg += 3 )
 		{
-			Math::Matrix< 4, 4 > psi;
+			Math::Matrix< double, 4, 4 > psi;
 			std::string sType = m_children[ startArg ]->evaluate( c ).getText();
 			double dt = m_children[ startArg + 1 ]->evaluate( c ).getNumber();
 			double r = m_children[ startArg + 2 ]->evaluate( c ).getNumber();
@@ -238,7 +238,7 @@ AttributeValue AttributeExpressionFunction::evaluate( const EvaluationContext& c
 		}
 
 		// compute complex eigenvalues of psiSum;
-		typedef	Math::Matrix< 0, 0, std::complex< double > > ComplexMat;
+		typedef	Math::Matrix< std::complex< double > > ComplexMat;
 		Math::Vector< std::complex< double > > eigenvalues( 4 );
 		ComplexMat eigenvectors( 4, 4 );
 		if ( lapack::geev( psiSum, eigenvalues, (ComplexMat*)0, &eigenvectors, lapack::optimal_workspace() ) != 0 )
