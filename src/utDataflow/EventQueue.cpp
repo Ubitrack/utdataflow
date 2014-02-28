@@ -50,7 +50,7 @@ namespace Ubitrack { namespace Dataflow {
 static boost::scoped_ptr< EventQueue > g_pEventQueue;
 static int g_RefEventQueue = 0;
 
-EventQueue& EventQueue::singleton()
+EventQueue& EventQueue::singleton(bool dropEvents)
 {
     // race condition between network receiving thread and main thread
     static boost::mutex singletonMutex;
@@ -58,7 +58,7 @@ EventQueue& EventQueue::singleton()
 
 	// create a new singleton if necessary
 	if ( !g_pEventQueue )
-		g_pEventQueue.reset( new EventQueue );
+		g_pEventQueue.reset( new EventQueue(dropEvents) );
 
 	return *g_pEventQueue;
 }
@@ -69,11 +69,12 @@ void EventQueue::destroyEventQueue()
 }
 
 
-EventQueue::EventQueue()
+EventQueue::EventQueue(bool dropEvents)
 	: m_State( state_stopped )
 {
 	// create a new thread
 	m_pThread = boost::shared_ptr< boost::thread >( new boost::thread( boost::bind( &EventQueue::threadFunction, this ) ) );
+	m_dropEvents = dropEvents;
 }
 
 
@@ -162,7 +163,7 @@ void EventQueue::queue( std::vector< QueueData >& events )
 	// Patrick Maier: Prevents the queue to be filled up when the receiving thread is paused (.NET, Java, etc.)
 	// remove events from the queue if it is too long
 	// just to be sure that there is something
-	if ( !m_Queue.empty() ) {
+	if ( !m_Queue.empty() && m_dropEvents) {
 			while ( m_Queue.front().pReceiverInfo && m_Queue.front().pReceiverInfo->nMaxQueueLength > 0 &&
 				m_Queue.front().pReceiverInfo->nQueuedEvents > m_Queue.front().pReceiverInfo->nMaxQueueLength )
 			{
@@ -254,7 +255,7 @@ void EventQueue::dispatchNow()
 				<< ( m_Queue.front().pReceiverInfo ? m_Queue.front().pReceiverInfo->pPort->fullName() : "(unknown)" ) );
 
 			if ( m_Queue.front().pReceiverInfo && m_Queue.front().pReceiverInfo->nMaxQueueLength > 0 &&
-				m_Queue.front().pReceiverInfo->nQueuedEvents > m_Queue.front().pReceiverInfo->nMaxQueueLength )
+				m_Queue.front().pReceiverInfo->nQueuedEvents > m_Queue.front().pReceiverInfo->nMaxQueueLength && m_dropEvents )
 			{
 				// limit number of "events dropped" messages in WARN level
 				static unsigned nDropMessages = 0;
@@ -339,7 +340,7 @@ void EventQueue::threadFunction()
 					<< ( m_Queue.front().pReceiverInfo ? m_Queue.front().pReceiverInfo->pPort->fullName() : "(unknown)" ) );
 					
 				if ( m_Queue.front().pReceiverInfo && m_Queue.front().pReceiverInfo->nMaxQueueLength > 0 &&
-					m_Queue.front().pReceiverInfo->nQueuedEvents > m_Queue.front().pReceiverInfo->nMaxQueueLength )
+					m_Queue.front().pReceiverInfo->nQueuedEvents > m_Queue.front().pReceiverInfo->nMaxQueueLength && m_dropEvents)
 				{
 					// limit number of "events dropped" messages in WARN level
 					static unsigned nDropMessages = 0;

@@ -88,7 +88,7 @@ public:
 	};
 	
 	/** Constructor */
-	EventQueue();
+	EventQueue(bool dropEvents=true);
 
 	/** destructor, stops the event thread */
 	~EventQueue();
@@ -145,7 +145,7 @@ public:
 	void clear();
 
 	/** get the main eventqueue object */
-	static EventQueue& singleton();
+	static EventQueue& singleton(bool dropEvents=true);
 
 	static void destroyEventQueue();	
 
@@ -170,6 +170,9 @@ protected:
 
 	/** current state of the event thread */
 	enum { state_running, state_stopping, state_stopped, state_end } m_State;
+	
+	/** should the event queue drop events? by default true, needed for real time execution, not droping events handy for offline calculations*/
+	bool m_dropEvents;
 };
 
 
