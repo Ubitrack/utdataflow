@@ -269,8 +269,14 @@ public:
 		boost::mutex::scoped_lock l( m_componentMapMutex );
 
 		typename ComponentMap::iterator it = m_componentMap.find( key );
+		
 		if ( it == m_componentMap.end() )
-			UBITRACK_THROW( "component does not exist" );
+		{
+			std::string err_msg( "component with key=\"" );
+			std::ostringstream oStream( err_msg );
+			oStream << key << "\" does not exist.";
+			UBITRACK_THROW( oStream.str() );
+		}
 		else
 		{
 			// convert weak to shared pointer to prevent unwanted deletion of object
