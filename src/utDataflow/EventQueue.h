@@ -149,6 +149,9 @@ public:
 
 	static void destroyEventQueue();	
 
+	/** retrieve the current length of the EventQueue **/
+	unsigned int getCurrentQueueLength();
+
 protected:
 	/** queue thread function */
 	void threadFunction();

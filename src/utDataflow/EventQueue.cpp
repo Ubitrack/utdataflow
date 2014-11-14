@@ -424,5 +424,9 @@ void EventQueue::threadFunction()
 	}
 }
 
+unsigned int EventQueue::getCurrentQueueLength() {
+	return m_Queue.size();
+}
+
 
 } } // namespace Ubitrack::Dataflow
