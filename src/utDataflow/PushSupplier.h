@@ -139,6 +139,7 @@ void PushSupplierCore< EventType >::send( const EventType& rEvent )
 	}
 	
 	// enqueue it all in one go
+	// XXX this call to retrieve the event queue does not initialize the bool drop_events parameter. (Ulrich Eck)
 	EventQueue::singleton().queue( events );
 }
 
