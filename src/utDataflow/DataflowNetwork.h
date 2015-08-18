@@ -420,6 +420,11 @@ namespace Ubitrack { namespace Dataflow {
 		 */
 		void assignEventPriorities();
 
+		/**
+		 * Assigns event domain to the components.
+		 */
+		void assignEventDomain(unsigned int eventDomain);
+
 	protected:
 		/**
 		 * Helper function that provides easy access to a port pair

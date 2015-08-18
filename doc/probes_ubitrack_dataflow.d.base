@@ -1,0 +1,13 @@
+/* DTRACE provider specification for Ubitrack
+ *
+ * author Ulrich Eck <ueck@net-labs.de>
+ */
+
+provider ubitrack {
+
+    /* probes around eventqueue dispatch */
+    probe eventqueue__dispatch__begin(unsigned int domain, unsigned long long int priority, char *component, char* port);
+    probe eventqueue__dispatch__end(unsigned int domain, unsigned long long int priority, char *component, char* port);
+
+};
+

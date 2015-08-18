@@ -46,6 +46,7 @@ Component::Component( const std::string& name )
 	, m_componentMutex()
 	, m_running( false )
 	, m_eventPriority( 0 )
+	, m_eventDomain( 0 )
 {
 	LOG4CPP_DEBUG( logger, "Component (" << name << ")" );
 }

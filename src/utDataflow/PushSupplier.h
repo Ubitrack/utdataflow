@@ -93,6 +93,11 @@ protected:
 	/** the list of consumers */
 	ConsumerList m_pushConsumers;
 
+	/**
+	 * EventDomain - typically 0
+	 */
+	unsigned int m_eventDomain;
+
 };
 
 
@@ -130,17 +135,31 @@ void PushSupplierCore< EventType >::send( const EventType& rEvent )
 	// priority to the timestamp without disturbing the time order...
 
 	// create list of events for each consumer
-	std::vector< EventQueue::QueueData > events;
+	typedef std::map< unsigned int, std::vector< EventQueue::QueueData > > event_map_type;
+	event_map_type events;
 	for ( typename ConsumerList::iterator it = m_pushConsumers.begin(); it != m_pushConsumers.end(); it++ ) {
-		
-		events.push_back( EventQueue::QueueData( &(*it)->getReceiverInfo(), boost::bind( (*it)->getSlot(), EventType( rEvent ) ),
-			EventTypeTraits< EventType >().getPriority( rEvent ) + (*it)->getPort().getComponent().getEventPriority() ) );		
+
+		// retrieve event domain from target component
+		unsigned int eventDomain = (*it)->getPort().getComponent().getEventDomain();
+
+		// check if events has a list for the domain already
+		event_map_type::const_iterator itev = events.find(eventDomain);
+		if (itev==events.end()) {
+			events[eventDomain] = std::vector< EventQueue::QueueData >();
+		}
+
+		// add event to domain events
+		events[eventDomain].push_back(
+				EventQueue::QueueData( &(*it)->getReceiverInfo(), boost::bind( (*it)->getSlot(), EventType( rEvent ) ),
+			    EventTypeTraits< EventType >().getPriority( rEvent ) + (*it)->getPort().getComponent().getEventPriority() ) );
 			
 	}
 	
 	// enqueue it all in one go
 	// XXX this call to retrieve the event queue does not initialize the bool drop_events parameter. (Ulrich Eck)
-	EventQueue::singleton().queue( events );
+	for (event_map_type::iterator itev = events.begin(); itev !=events.end(); itev++) {
+		EventQueue::singleton(itev->first).queue( itev->second );
+	}
 }
 
 

@@ -70,6 +70,10 @@ public:
 		if ( !m_pullSupplier )
 			UBITRACK_THROW( "PullConsumer not connected" );
 
+		// XXX ADD BENCHMARKING HERE
+		// - measure execution time?
+		// - access to component name only in subclass ..
+
 		// fetch and return a result from supplier
 		if ( m_pMutex )
 		{

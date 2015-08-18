@@ -134,6 +134,17 @@ public:
 	int getEventPriority() const
 	{ return m_eventPriority; }
 
+	/**
+	 * Sets the eventqueue domain.
+	 * This method is used by the data flow network and the event queue when running multiple evenqueues in parallel.
+	 */
+	void setEventDomain( unsigned int eventDomain )
+	{ m_eventDomain = eventDomain; }
+
+	/** Returns the eventqueue domain. */
+	unsigned int getEventDomain() const
+	{ return m_eventDomain; }
+
 	/** type of mutex for later reference */
 	typedef boost::recursive_mutex MutexType;
 	
@@ -159,6 +170,12 @@ protected:
 	 * Note: this is the priority of events received (not sent) by the component!
 	 */
 	int m_eventPriority;
+
+	/**
+	 * EventDomain references the index of the eventqueue to use
+	 * for applications which integrate multiple dataflows.
+	 */
+	unsigned int m_eventDomain;
 };
 
 

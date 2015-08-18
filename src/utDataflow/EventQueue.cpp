@@ -37,6 +37,17 @@
 #include "Port.h"
 #include "EventQueue.h"
 
+#ifdef HAVE_DTRACE
+  #include "TracingProvider.h"
+  #include <boost/lexical_cast.hpp>
+  #include <boost/thread.hpp>
+#endif
+
+// defaults to one eventqueue by default
+#ifndef UT_MAXIMUM_EVENTQUEUES
+  #define UT_MAXIMUM_EVENTQUEUES 1
+#endif
+
 // get loggers
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Dataflow.EventQueue" ) );
 static log4cpp::Category& eventLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Dataflow.EventQueue" ) );
@@ -47,30 +58,39 @@ static const unsigned long long g_eventsDroppedMessageInterval( 1000000000ll );
 namespace Ubitrack { namespace Dataflow {
 
 // the singleton event queue object
-static boost::scoped_ptr< EventQueue > g_pEventQueue;
+static boost::scoped_ptr< EventQueue > g_pEventQueue[UT_MAXIMUM_EVENTQUEUES];
+
+// is not used anywhere in dataflow
 static int g_RefEventQueue = 0;
 
-EventQueue& EventQueue::singleton(bool dropEvents)
+EventQueue& EventQueue::singleton(unsigned int eventDomain, bool dropEvents)
 {
+	if (eventDomain >= UT_MAXIMUM_EVENTQUEUES) {
+		// display warning here ...
+		eventDomain = 0;
+	}
     // race condition between network receiving thread and main thread
     static boost::mutex singletonMutex;
     boost::mutex::scoped_lock l( singletonMutex );
 
 	// create a new singleton if necessary
-	if ( !g_pEventQueue )
-		g_pEventQueue.reset( new EventQueue(dropEvents) );
+	if ( !g_pEventQueue[eventDomain] ) {
+		g_pEventQueue[eventDomain].reset( new EventQueue(eventDomain, dropEvents) );
+		LOG4CPP_NOTICE( logger, "Created Instance of EventQueue in domain: " << eventDomain );
+	}
 
-	return *g_pEventQueue;
+	return *(g_pEventQueue[eventDomain]);
 }
 
-void EventQueue::destroyEventQueue()
+void EventQueue::destroyEventQueue(unsigned int eventDomain)
 {	
-	g_pEventQueue.reset( 0 );
+	g_pEventQueue[eventDomain].reset( 0 );
 }
 
 
-EventQueue::EventQueue(bool dropEvents)
+EventQueue::EventQueue(unsigned int eventDomain, bool dropEvents)
 	: m_State( state_stopped )
+	, m_eventDomain( eventDomain )
 {
 	// create a new thread
 	m_pThread = boost::shared_ptr< boost::thread >( new boost::thread( boost::bind( &EventQueue::threadFunction, this ) ) );
@@ -96,7 +116,7 @@ EventQueue::~EventQueue()
 
 void EventQueue::start()
 {
-	LOG4CPP_NOTICE( logger, "Event queue started" );
+	LOG4CPP_NOTICE( logger, "Event queue started in domain: " << m_eventDomain );
 
 	// tell thread to start
 	boost::mutex::scoped_lock l( m_Mutex );
@@ -241,6 +261,7 @@ void EventQueue::dispatchNow()
 	{
 		// need this type of logic, as boost is very strict with locking...
 		EventType dispatchEvent;
+		unsigned long long int messagePriority;
 		ReceiverInfo* pReceiverInfo( 0 );
 
 		{
@@ -280,6 +301,7 @@ void EventQueue::dispatchNow()
 			{
 				pReceiverInfo = m_Queue.front().pReceiverInfo;
 				dispatchEvent = m_Queue.front().event;
+				messagePriority = m_Queue.front().priority;
 			}
 			
 			if ( m_Queue.front().pReceiverInfo )
@@ -290,6 +312,20 @@ void EventQueue::dispatchNow()
 		// dispatch the event
 		if ( dispatchEvent )
 		{
+			// XXX ADD BENCHMARKING HERE ..
+			// - component name: pReceiverInfo->pPort->getComponent().getName()
+			// - port name: pReceiverInfo->pPort->getName()
+			// - timestamp: p->getTimestamp()
+#ifdef HAVE_DTRACE
+			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
+				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
+												   messagePriority,
+												   pReceiverInfo->pPort->getComponent().getName().c_str(),
+												   pReceiverInfo->pPort->getName().c_str());
+			}
+#endif
+
+
 			try
 			{
 				if ( pReceiverInfo && pReceiverInfo->pMutex )
@@ -314,6 +350,16 @@ void EventQueue::dispatchNow()
 			{
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" );
 			}
+
+#ifdef HAVE_DTRACE
+			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
+				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
+												 messagePriority,
+												 pReceiverInfo->pPort->getComponent().getName().c_str(),
+												 pReceiverInfo->pPort->getName().c_str());
+			}
+#endif
+
 		}
 	}
 }
@@ -328,7 +374,8 @@ void EventQueue::threadFunction()
 	{
 		// need this type of logic, as boost is very strict with locking...
 		EventType dispatchEvent;
-		ReceiverInfo* pReceiverInfo( 0 );		
+		unsigned long long int messagePriority;
+		ReceiverInfo* pReceiverInfo( 0 );
 		{
 			// lock the mutex
 			boost::mutex::scoped_lock l( m_Mutex );
@@ -365,6 +412,7 @@ void EventQueue::threadFunction()
 				{
 					pReceiverInfo = m_Queue.front().pReceiverInfo;
 					dispatchEvent = m_Queue.front().event;
+					messagePriority = m_Queue.front().priority;
 				}
 					
 				if ( m_Queue.front().pReceiverInfo )
@@ -398,6 +446,20 @@ void EventQueue::threadFunction()
 		{
 			try
 			{
+
+				// XXX ADD BENCHMARKING HERE ..
+				// - component name: pReceiverInfo->pPort->getComponent().getName()
+				// - port name: pReceiverInfo->pPort->getName()
+				// - timestamp: p->getTimestamp()
+#ifdef HAVE_DTRACE
+			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
+				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
+												   messagePriority,
+												   pReceiverInfo->pPort->getComponent().getName().c_str(),
+												   pReceiverInfo->pPort->getName().c_str());
+			}
+#endif
+
 				if ( pReceiverInfo && pReceiverInfo->pMutex )
 				{
 					// lock the mutex
@@ -420,6 +482,15 @@ void EventQueue::threadFunction()
 			{
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" << " when pushing on port " << pReceiverInfo->pPort->fullName() );
 			}
+
+#ifdef HAVE_DTRACE
+			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
+				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
+												 messagePriority,
+												 pReceiverInfo->pPort->getComponent().getName().c_str(),
+												 pReceiverInfo->pPort->getName().c_str());
+			}
+#endif
 		}
 	}
 }

@@ -526,4 +526,15 @@ namespace Ubitrack { namespace Dataflow {
 				LOG4CPP_DEBUG( logger, it->first << " has priority " << it->second->getEventPriority() );
 	}
 
+	void DataflowNetwork::assignEventDomain(unsigned int eventDomain)
+	{
+		LOG4CPP_INFO( logger, "assigning event domain " << eventDomain << " to components" );
+
+		// set all components to use the given eventDomain
+		for ( ComponentMap::iterator it = m_componentIDMap.begin(); it != m_componentIDMap.end(); it++ )
+			it->second->setEventDomain( eventDomain );
+
+	}
+
+
 } } // namespace Ubitrack::Dataflow

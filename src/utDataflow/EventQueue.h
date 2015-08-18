@@ -88,7 +88,7 @@ public:
 	};
 	
 	/** Constructor */
-	EventQueue(bool dropEvents=true);
+	EventQueue(unsigned int eventDomain=0, bool dropEvents=true);
 
 	/** destructor, stops the event thread */
 	~EventQueue();
@@ -145,9 +145,9 @@ public:
 	void clear();
 
 	/** get the main eventqueue object */
-	static EventQueue& singleton(bool dropEvents=true);
+	static EventQueue& singleton(unsigned int eventDomain=0, bool dropEvents=true);
 
-	static void destroyEventQueue();	
+	static void destroyEventQueue(unsigned int eventDomain=0);
 
 	/** retrieve the current length of the EventQueue **/
 	unsigned int getCurrentQueueLength();
@@ -176,6 +176,11 @@ protected:
 	
 	/** should the event queue drop events? by default true, needed for real time execution, not droping events handy for offline calculations*/
 	bool m_dropEvents;
+
+	/**
+	 * EventDomain of this Eventqueue - typically 0
+	 */
+	unsigned int m_eventDomain;
 };
 
 
