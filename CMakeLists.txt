@@ -4,6 +4,7 @@ ut_add_module(utdataflow utcore)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 UT_OPTION(UT_ENABLE_DTRACE "Enable DTrace tracing of eventqueue activity?" ON IF UNIX)
+UT_OPTION(UT_ENABLE_ETW "Enable Event Tracing of eventqueue activity?" ON IF WIN32)
 
 IF(UT_ENABLE_DTRACE)
   MESSAGE( STATUS "Enabled DTrace.")
@@ -12,6 +13,13 @@ IF(UT_ENABLE_DTRACE)
   include_directories(${CMAKE_BINARY_DIR})
 ENDIF(UT_ENABLE_DTRACE)
 
+IF(UT_ENABLE_ETW)
+  MESSAGE( STATUS "Enabled Event Tracing for Windows.")
+  INCLUDE(etw)
+  add_definitions("-DHAVE_ETW")
+  include_directories(${CMAKE_BINARY_DIR})
+ENDIF(UT_ENABLE_ETW)
+
 ut_module_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR})
 ut_glob_module_sources(HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h" SOURCES "src/*/*.cpp" "src/*/*/*.cpp")
 ut_create_module(${TINYXML_LIBRARIES} ${LOG4CPP_LIBRARIES} ${LAPACK_LIBRARIES} ${Boost_LIBRARIES})
@@ -19,3 +27,7 @@ ut_create_module(${TINYXML_LIBRARIES} ${LOG4CPP_LIBRARIES} ${LAPACK_LIBRARIES} $
 IF(UT_ENABLE_DTRACE)
   DTRACE_INSTRUMENT(utdataflow)
 ENDIF(UT_ENABLE_DTRACE)
+
+IF(UT_ENABLE_ETW)
+  ETW_INSTRUMENT(utdataflow)
+ENDIF(UT_ENABLE_ETW)

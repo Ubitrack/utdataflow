@@ -37,11 +37,9 @@
 #include "Port.h"
 #include "EventQueue.h"
 
-#ifdef HAVE_DTRACE
+// #if defined(HAVE_DTRACE) || defined(HAVE_ETW)
   #include "TracingProvider.h"
-  #include <boost/lexical_cast.hpp>
-  #include <boost/thread.hpp>
-#endif
+// #endif
 
 // defaults to one eventqueue by default
 #ifndef UT_MAXIMUM_EVENTQUEUES
@@ -325,6 +323,11 @@ void EventQueue::dispatchNow()
 			}
 #endif
 
+#ifdef HAVE_ETW
+			int64 _startTime = ETWUbitrackEventQueueDispatchBegin(m_eventDomain, messagePriority, 
+																  pReceiverInfo->pPort->getComponent().getName().c_str(),
+																  pReceiverInfo->pPort->getName().c_str());
+#endif
 
 			try
 			{
@@ -358,6 +361,13 @@ void EventQueue::dispatchNow()
 												 pReceiverInfo->pPort->getComponent().getName().c_str(),
 												 pReceiverInfo->pPort->getName().c_str());
 			}
+#endif
+
+#ifdef HAVE_ETW
+			ETWUbitrackEventQueueDispatchEnd(m_eventDomain, messagePriority, 
+											 pReceiverInfo->pPort->getComponent().getName().c_str(),
+											 pReceiverInfo->pPort->getName().c_str(),
+											 _startTime);
 #endif
 
 		}
@@ -444,13 +454,8 @@ void EventQueue::threadFunction()
 		// dispatch the event if one was taken from the queue
 		if ( dispatchEvent )
 		{
-			try
-			{
 
-				// XXX ADD BENCHMARKING HERE ..
-				// - component name: pReceiverInfo->pPort->getComponent().getName()
-				// - port name: pReceiverInfo->pPort->getName()
-				// - timestamp: p->getTimestamp()
+			// Tracing of Eventqueue activity via dtrace or etw
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
@@ -459,6 +464,14 @@ void EventQueue::threadFunction()
 												   pReceiverInfo->pPort->getName().c_str());
 			}
 #endif
+
+#ifdef HAVE_ETW
+			int64 _startTime = ETWUbitrackEventQueueDispatchBegin(m_eventDomain, messagePriority, 
+																  pReceiverInfo->pPort->getComponent().getName().c_str(),
+																  pReceiverInfo->pPort->getName().c_str());
+#endif
+			try
+			{
 
 				if ( pReceiverInfo && pReceiverInfo->pMutex )
 				{
@@ -483,6 +496,7 @@ void EventQueue::threadFunction()
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" << " when pushing on port " << pReceiverInfo->pPort->fullName() );
 			}
 
+			// Tracing of Eventqueue activity via dtrace or etw
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
@@ -491,6 +505,15 @@ void EventQueue::threadFunction()
 												 pReceiverInfo->pPort->getName().c_str());
 			}
 #endif
+
+
+#ifdef HAVE_ETW
+			ETWUbitrackEventQueueDispatchEnd(m_eventDomain, messagePriority, 
+											 pReceiverInfo->pPort->getComponent().getName().c_str(),
+											 pReceiverInfo->pPort->getName().c_str(),
+											 _startTime);
+#endif
+
 		}
 	}
 }
