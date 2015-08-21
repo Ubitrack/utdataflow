@@ -74,7 +74,7 @@ EventQueue& EventQueue::singleton(unsigned int eventDomain, bool dropEvents)
 	// create a new singleton if necessary
 	if ( !g_pEventQueue[eventDomain] ) {
 		g_pEventQueue[eventDomain].reset( new EventQueue(eventDomain, dropEvents) );
-		LOG4CPP_NOTICE( logger, "Created Instance of EventQueue in domain: " << eventDomain );
+		LOG4CPP_NOTICE( logger, "Created Instance of EventQueue in domain: " << eventDomain << " max: " <<  (UT_MAXIMUM_EVENTQUEUES - 1));
 	}
 
 	return *(g_pEventQueue[eventDomain]);
@@ -114,7 +114,7 @@ EventQueue::~EventQueue()
 
 void EventQueue::start()
 {
-	LOG4CPP_NOTICE( logger, "Event queue started in domain: " << m_eventDomain );
+	LOG4CPP_NOTICE( logger, "Event queue started in domain: " << m_eventDomain << " max: " <<  (UT_MAXIMUM_EVENTQUEUES - 1) );
 
 	// tell thread to start
 	boost::mutex::scoped_lock l( m_Mutex );
