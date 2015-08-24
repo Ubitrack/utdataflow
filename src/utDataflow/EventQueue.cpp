@@ -207,6 +207,9 @@ void EventQueue::queue( std::vector< QueueData >& events )
 				if ( m_Queue.front().pReceiverInfo )
 					m_Queue.front().pReceiverInfo->nQueuedEvents--;
 				m_Queue.pop_front();
+
+				// log trace for discarded item
+
 			}
 	}
 
@@ -310,10 +313,7 @@ void EventQueue::dispatchNow()
 		// dispatch the event
 		if ( dispatchEvent )
 		{
-			// XXX ADD BENCHMARKING HERE ..
-			// - component name: pReceiverInfo->pPort->getComponent().getName()
-			// - port name: pReceiverInfo->pPort->getName()
-			// - timestamp: p->getTimestamp()
+
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
@@ -455,7 +455,6 @@ void EventQueue::threadFunction()
 		if ( dispatchEvent )
 		{
 
-			// Tracing of Eventqueue activity via dtrace or etw
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
@@ -496,7 +495,6 @@ void EventQueue::threadFunction()
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" << " when pushing on port " << pReceiverInfo->pPort->fullName() );
 			}
 
-			// Tracing of Eventqueue activity via dtrace or etw
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,

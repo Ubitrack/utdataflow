@@ -28,12 +28,13 @@
  *
  * @author Ulrich Eck <ueck@net-labs.de>
  * based on work from: https://randomascii.wordpress.com/2015/04/14/uiforetw-windows-performance-made-easier/
- */ 
+ */
 
 
+#ifdef	_WIN32
 #include <stdio.h>
 #include "ETWTracing.h"
-
+#endif
 
 #ifdef ETW_MARKS_ENABLED
 
