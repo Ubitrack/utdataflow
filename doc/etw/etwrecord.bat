@@ -116,10 +116,10 @@ xperf -on PROC_THREAD %KernelStackWalk% %KBuffers% -f %kernelfile%  -start %Sess
 
 @rem Record the data and stop tracing
 xperf -stop %SessionName% -stop
-@set FileAndCompressFlags=%FileName% -compress
-@if "%NOETWCOMPRESS%" == "" goto compressTrace
+@rem @set FileAndCompressFlags=%FileName% -compress
+@rem @if "%NOETWCOMPRESS%" == "" goto compressTrace
 @set FileAndCompressFlags=%FileName%
-:compressTrace
+@rem :compressTrace
 
 @rem New method -- allows requesting trace compression. This is a NOP on
 @rem Windows 7 but on Windows 8 creates 5-7x smaller traces (that don't load on Windows 7)
