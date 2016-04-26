@@ -224,5 +224,22 @@ void ETWUbitrackEventQueueDispatchDiscard(int eventDomain, unsigned long long in
 	EventWriteEventQueueDispatchDiscard( eventDomain, priority, componentName, portName );
 }
 
+void ETWUbitrackEventQueueApplication(unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text)
+{
+	// If we are running on Windows XP or if our providers have not been enabled
+	// (by xperf or other) then this will be false and we can early out.
+	// Be sure to check the appropriate context for the event. This is only
+	// worth checking if there is some cost beyond the EventWrite that we can
+	// avoid -- the redirectors in this file guarantee that EventWrite is always
+	// safe to call.
+	// In this case we also avoid the potentially unreliable TLS implementation
+	// (for dynamically loaded DLLs) on Windows XP.
+	if ( !UBITRACK_Context.IsEnabled )
+	{
+		return;
+	}
+
+	EventWriteEventQueueApplication(priority, componentName, portName, text );
+}
 
 #endif // ETW_MARKS_ENABLED

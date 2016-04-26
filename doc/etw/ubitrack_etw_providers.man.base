@@ -87,6 +87,12 @@ Adjust that to match your games actual install path.
             <data inType="win:AnsiString" name="ComponentName" />
             <data inType="win:AnsiString" name="PortName" />
           </template>
+          <template tid="T_Application">
+            <data inType="win:Int64" name="Priority" />
+            <data inType="win:AnsiString" name="ComponentName" />
+            <data inType="win:AnsiString" name="PortName" />
+            <data inType="win:AnsiString" name="Text" />
+          </template>
         </templates>
         <keywords>
           <keyword name="HighFrequency" mask="0x2" />
@@ -96,6 +102,7 @@ Adjust that to match your games actual install path.
           <opcode name="DispatchBegin" symbol="_DispatchBeginOpcode" value="10"/>
           <opcode name="DispatchEnd" symbol="_DispatchEndOpcode" value="11"/>
           <opcode name="DispatchDiscard" symbol="_DispatchDiscardOpcode" value="12"/>
+          <opcode name="Application" symbol="_ApplicationOpcode" value="13"/>
         </opcodes>
         <tasks>
           <task name="EventQueue" symbol="EventQueue_Task" value="1" eventGUID="{866D02A3-1A29-4207-B710-E883C8F59851}"/>
@@ -104,6 +111,7 @@ Adjust that to match your games actual install path.
           <event symbol="EventQueueDispatchBegin" template="T_Eventqueue_Dispatch_Begin" value="100" task="EventQueue" opcode="DispatchBegin" keywords="HighFrequency" />
           <event symbol="EventQueueDispatchEnd" template="T_Eventqueue_Dispatch_End" value="101" task="EventQueue" opcode="DispatchEnd" keywords="HighFrequency" />
           <event symbol="EventQueueDispatchDiscard" template="T_Eventqueue_Dispatch_Discard" value="102" task="EventQueue" opcode="DispatchDiscard" keywords="HighFrequency" />
+          <event symbol="EventQueueApplication" template="T_Application" value="103" task="EventQueue" opcode="Application" keywords="HighFrequency" />
         </events>
       </provider>
     </events>
