@@ -88,6 +88,7 @@ Adjust that to match your games actual install path.
             <data inType="win:AnsiString" name="PortName" />
           </template>
           <template tid="T_Application">
+            <data inType="win:Int32" name="EventDomain" />
             <data inType="win:Int64" name="Priority" />
             <data inType="win:AnsiString" name="ComponentName" />
             <data inType="win:AnsiString" name="PortName" />

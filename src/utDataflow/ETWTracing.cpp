@@ -224,7 +224,7 @@ void ETWUbitrackEventQueueDispatchDiscard(int eventDomain, unsigned long long in
 	EventWriteEventQueueDispatchDiscard( eventDomain, priority, componentName, portName );
 }
 
-void ETWUbitrackEventQueueApplication(unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text)
+void ETWUbitrackEventQueueApplication(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text)
 {
 	// If we are running on Windows XP or if our providers have not been enabled
 	// (by xperf or other) then this will be false and we can early out.
@@ -239,7 +239,7 @@ void ETWUbitrackEventQueueApplication(unsigned long long int priority, _In_z_ PC
 		return;
 	}
 
-	EventWriteEventQueueApplication(priority, componentName, portName, text );
+	EventWriteEventQueueApplication( eventDomain, priority, componentName, portName, text );
 }
 
 #endif // ETW_MARKS_ENABLED

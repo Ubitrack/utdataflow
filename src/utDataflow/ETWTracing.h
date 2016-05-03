@@ -69,14 +69,14 @@ typedef long long int64;
 UTDATAFLOW_EXPORT int64 __cdecl ETWUbitrackEventQueueDispatchBegin(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName);
 UTDATAFLOW_EXPORT int64 __cdecl ETWUbitrackEventQueueDispatchEnd(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName, int64 startTime);
 UTDATAFLOW_EXPORT void __cdecl ETWUbitrackEventQueueDispatchDiscard(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName);
-UTDATAFLOW_EXPORT void __cdecl ETWUbitrackEventQueueApplication(unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text);
+UTDATAFLOW_EXPORT void __cdecl ETWUbitrackEventQueueApplication(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text);
 
 #else // ETW_MARKS_ENABLED
 
 UTDATAFLOW_EXPORT int64 __cdecl ETWUbitrackEventQueueDispatchBegin(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName) { return 0; };
 UTDATAFLOW_EXPORT int64 __cdecl ETWUbitrackEventQueueDispatchEnd(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName, int64 startTime) { return 0; };
 UTDATAFLOW_EXPORT void __cdecl ETWUbitrackEventQueueDispatchDiscard(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName) {};
-UTDATAFLOW_EXPORT void __cdecl ETWUbitrackEventQueueApplication(unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text) {};
+UTDATAFLOW_EXPORT void __cdecl ETWUbitrackEventQueueApplication(int eventDomain, unsigned long long int priority, _In_z_ PCSTR componentName,  _In_z_ PCSTR portName,  _In_z_ PCSTR text) {};
 
 #endif // ETW_MARKS_ENABLED
 
