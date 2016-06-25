@@ -3,8 +3,8 @@ ut_add_module(utdataflow utcore)
 
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-UT_OPTION(UT_ENABLE_DTRACE "Enable DTrace tracing of eventqueue activity?" ON IF APPLE)
-UT_OPTION(UT_ENABLE_ETW "Enable Event Tracing of eventqueue activity?" ON IF WIN32)
+UT_OPTION(UT_ENABLE_DTRACE "Enable DTrace tracing of eventqueue activity?" OFF)
+UT_OPTION(UT_ENABLE_ETW "Enable Event Tracing of eventqueue activity?" OFF)
 
 set(tracing_hdr_files "")
 set(tracing_src_files "")

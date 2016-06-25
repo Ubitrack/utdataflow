@@ -32,6 +32,7 @@
 #ifndef UBITACK_ETWTRACING_H
 #define UBITACK_ETWTRACING_H
 
+
 #include "utDataflow.h"
 // ETW (Event Tracing for Windows) profiling helpers.
 // This allows easy insertion of Generic Event markers into ETW/xperf tracing
@@ -57,10 +58,12 @@ typedef long long int64;
 // ETW support should be compiled in for all Windows PC platforms. It isn't
 // supported on Windows XP but that is determined at run-time. This #define
 // is used to let the code compile (but do nothing) on other operating systems.
+#ifdef ENABLE_DATAFLOW_TRACING
 #if (WINVER >= _WIN32_WINNT_VISTA)
 #define	ETW_MARKS_ENABLED
 #endif
 #endif
+#endif 
 
 #ifdef	ETW_MARKS_ENABLED
 
