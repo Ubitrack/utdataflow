@@ -36,10 +36,7 @@
 #include <utMeasurement/Timestamp.h>
 #include "Port.h"
 #include "EventQueue.h"
-
-// #if defined(HAVE_DTRACE) || defined(HAVE_ETW)
-  #include "TracingProvider.h"
-// #endif
+#include "utUtil/TracingProvider.h"
 
 // defaults to one eventqueue by default
 #ifndef UT_MAXIMUM_EVENTQUEUES
@@ -314,6 +311,7 @@ void EventQueue::dispatchNow()
 		if ( dispatchEvent )
 		{
 
+#ifdef ENABLE_EVENT_TRACING
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
@@ -328,7 +326,7 @@ void EventQueue::dispatchNow()
 																  pReceiverInfo->pPort->getComponent().getName().c_str(),
 																  pReceiverInfo->pPort->getName().c_str());
 #endif
-
+#endif
 			try
 			{
 				if ( pReceiverInfo && pReceiverInfo->pMutex )
@@ -354,6 +352,7 @@ void EventQueue::dispatchNow()
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" );
 			}
 
+#ifdef ENABLE_EVENT_TRACING
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
@@ -369,7 +368,7 @@ void EventQueue::dispatchNow()
 											 pReceiverInfo->pPort->getName().c_str(),
 											 _startTime);
 #endif
-
+#endif
 		}
 	}
 }
@@ -454,7 +453,7 @@ void EventQueue::threadFunction()
 		// dispatch the event if one was taken from the queue
 		if ( dispatchEvent )
 		{
-
+#ifdef ENABLE_EVENT_TRACING
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
@@ -468,6 +467,7 @@ void EventQueue::threadFunction()
 			int64 _startTime = ETWUbitrackEventQueueDispatchBegin(m_eventDomain, messagePriority, 
 																  pReceiverInfo->pPort->getComponent().getName().c_str(),
 																  pReceiverInfo->pPort->getName().c_str());
+#endif
 #endif
 			try
 			{
@@ -494,7 +494,7 @@ void EventQueue::threadFunction()
 			{
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" << " when pushing on port " << pReceiverInfo->pPort->fullName() );
 			}
-
+#ifdef ENABLE_EVENT_TRACING
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
 				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
@@ -511,7 +511,7 @@ void EventQueue::threadFunction()
 											 pReceiverInfo->pPort->getName().c_str(),
 											 _startTime);
 #endif
-
+#endif
 		}
 	}
 }
