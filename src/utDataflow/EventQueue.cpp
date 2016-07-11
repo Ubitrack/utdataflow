@@ -312,21 +312,12 @@ void EventQueue::dispatchNow()
 		{
 
 #ifdef ENABLE_EVENT_TRACING
-#ifdef HAVE_DTRACE
-			if (UBITRACK_EVENTQUEUE_DISPATCH_BEGIN_ENABLED() && pReceiverInfo ) {
-				UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
-												   messagePriority,
-												   pReceiverInfo->pPort->getComponent().getName().c_str(),
-												   pReceiverInfo->pPort->getName().c_str());
-			}
+        if (pReceiverInfo) {
+            TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain, messagePriority,
+            pReceiverInfo->pPort->getComponent().getName().c_str(), pReceiverInfo->pPort->getName().c_str())
+        }
 #endif
 
-#ifdef HAVE_ETW
-			int64 _startTime = ETWUbitrackEventQueueDispatchBegin(m_eventDomain, messagePriority, 
-																  pReceiverInfo->pPort->getComponent().getName().c_str(),
-																  pReceiverInfo->pPort->getName().c_str());
-#endif
-#endif
 			try
 			{
 				if ( pReceiverInfo && pReceiverInfo->pMutex )
@@ -353,22 +344,12 @@ void EventQueue::dispatchNow()
 			}
 
 #ifdef ENABLE_EVENT_TRACING
-#ifdef HAVE_DTRACE
-			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
-				UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
-												 messagePriority,
-												 pReceiverInfo->pPort->getComponent().getName().c_str(),
-												 pReceiverInfo->pPort->getName().c_str());
-			}
+        if (pReceiverInfo) {
+            TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_end(m_eventDomain, messagePriority,
+            pReceiverInfo->pPort->getComponent().getName().c_str(), pReceiverInfo->pPort->getName().c_str())
+        }
 #endif
 
-#ifdef HAVE_ETW
-			ETWUbitrackEventQueueDispatchEnd(m_eventDomain, messagePriority, 
-											 pReceiverInfo->pPort->getComponent().getName().c_str(),
-											 pReceiverInfo->pPort->getName().c_str(),
-											 _startTime);
-#endif
-#endif
 		}
 	}
 }
@@ -494,6 +475,8 @@ void EventQueue::threadFunction()
 			{
 				LOG4CPP_WARN( eventLogger, "Caught unknown exception" << " when pushing on port " << pReceiverInfo->pPort->fullName() );
 			}
+
+
 #ifdef ENABLE_EVENT_TRACING
 #ifdef HAVE_DTRACE
 			if (UBITRACK_EVENTQUEUE_DISPATCH_END_ENABLED() && pReceiverInfo ) {
