@@ -36,7 +36,7 @@
 #include <utMeasurement/Timestamp.h>
 #include "Port.h"
 #include "EventQueue.h"
-#include "utUtil/TracingProvider.h"
+#include <utUtil/TracingProvider.h>
 
 // defaults to one eventqueue by default
 #ifndef UT_MAXIMUM_EVENTQUEUES
