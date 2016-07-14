@@ -345,7 +345,7 @@ void EventQueue::dispatchNow()
 
 #ifdef ENABLE_EVENT_TRACING
         if (pReceiverInfo) {
-            TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_end(m_eventDomain, messagePriority,
+            TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_END(m_eventDomain, messagePriority,
             pReceiverInfo->pPort->getComponent().getName().c_str(), pReceiverInfo->pPort->getName().c_str())
         }
 #endif
