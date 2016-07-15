@@ -229,6 +229,7 @@ typedef void registerComponentFunction( ComponentFactory* const cf );
 
 
 // add this before the definition of all registerComponentFunction functions
+// @todo find a way to combine multi-components into a single dll - or even all dll's into one ..
 #ifdef _WIN32
 	#define UBITRACK_REGISTER_COMPONENT extern "C" __declspec( dllexport ) void registerComponent
 #else
