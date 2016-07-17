@@ -312,6 +312,9 @@ void EventQueue::dispatchNow()
 		{
 
 #ifdef ENABLE_EVENT_TRACING
+#ifdef HAVE_ETW
+		int64 ___ubitrack_tracing_startTime = 0;
+#endif
         if (pReceiverInfo) {
             TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain, messagePriority,
             pReceiverInfo->pPort->getComponent().getName().c_str(), pReceiverInfo->pPort->getName().c_str())
