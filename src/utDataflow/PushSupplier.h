@@ -65,7 +65,7 @@ public:
 	 *
 	 * @param rEvent Measurement to be sent
 	 */
-	void send( const EventType& rEvent );
+	void send( const EventType& rEvent ) const;
 
 	/**
 	 * returns true if at least one consumer is connected
@@ -129,7 +129,7 @@ void PushSupplierCore< EventType >::removePushConsumer( OtherSide& rConsumer )
 
 
 template< class EventType >
-void PushSupplierCore< EventType >::send( const EventType& rEvent )
+void PushSupplierCore< EventType >::send( const EventType& rEvent ) const
 {
 	// here I am lazy and just assume that timestamps are so fine-grained that I can add the 
 	// priority to the timestamp without disturbing the time order...
@@ -137,7 +137,7 @@ void PushSupplierCore< EventType >::send( const EventType& rEvent )
 	// create list of events for each consumer
 	typedef std::map< unsigned int, std::vector< EventQueue::QueueData > > event_map_type;
 	event_map_type events;
-	for ( typename ConsumerList::iterator it = m_pushConsumers.begin(); it != m_pushConsumers.end(); it++ ) {
+	for ( typename ConsumerList::const_iterator it = m_pushConsumers.begin(); it != m_pushConsumers.end(); it++ ) {
 
 		// retrieve event domain from target component
 		unsigned int eventDomain = (*it)->getPort().getComponent().getEventDomain();
