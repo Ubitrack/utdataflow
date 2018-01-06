@@ -1,12 +1,14 @@
-import os
 from conans import ConanFile, CMake
-from conans.tools import download
-from conans.tools import unzip
 
 
 class UbitrackCoreConan(ConanFile):
     name = "ubitrack_dataflow"
     version = "1.3.0"
+
+    description = "Ubitrack Dataflow Library"
+    url = "https://github.com/Ubitrack/utdataflow.git"
+    license = "GPL"
+
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     options = {"shared": [True, False]}
