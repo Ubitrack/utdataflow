@@ -9,7 +9,7 @@ include(GNUInstallDirs)
 include(cmake/UbitrackConfig)
 
 # External Libraries (could this be solved with conan dependencies ??)
-set(UBITRACK_EXTRA_LIBS ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${OpenCL_LIBRARY})
+set(UBITRACK_EXTRA_LIBS )
 
 
 add_subdirectory(src)
