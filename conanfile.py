@@ -5,7 +5,7 @@ from conans.tools import unzip
 
 
 class UbitrackCoreConan(ConanFile):
-    name = "ubitrack_vision"
+    name = "ubitrack_dataflow"
     version = "1.3.0"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
