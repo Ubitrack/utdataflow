@@ -62,7 +62,7 @@ class UbitrackCoreConan(ConanFile):
         self.copy("*", dst="bin", src="bin", keep_path=False)
 
     def package_info(self):
-         suffix = ""
+        suffix = ""
         if self.settings.os == "Windows":
             suffix += self.version.replace(".", "")
             if self.settings.build_type == "Debug":
