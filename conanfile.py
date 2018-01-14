@@ -14,7 +14,7 @@ class UbitrackCoreConan(ConanFile):
     generators = "cmake"
     options = {"shared": [True, False]}
     requires = (
-        "ubitrack_core/%s@ulricheck/stable" % version,
+        "ubitrack_core/%s@ubitrack/stable" % version,
        )
 
     default_options = (
