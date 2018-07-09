@@ -22,7 +22,7 @@ class UbitrackCoreConan(ConanFile):
         )
 
     # all sources are deployed with the package
-    exports_sources = "doc/*", "src/*", "CMakeLists.txt"
+    exports_sources = "doc/*", "src/*", "CMakeLists.txt", "utdataflowConfig.cmake"
 
     def configure(self):
         if self.options.shared:
