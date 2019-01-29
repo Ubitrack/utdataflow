@@ -28,9 +28,9 @@ class UbitrackCoreConan(ConanFile):
         if self.options.shared:
             self.options['ubitrack_core'].shared = True
 
-    def imports(self):
-        self.copy(pattern="*.dll", dst="bin", src="bin") # From bin to bin
-        self.copy(pattern="*.dylib*", dst="lib", src="lib") 
+    # def imports(self):
+    #     self.copy(pattern="*.dll", dst="bin", src="bin") # From bin to bin
+    #     self.copy(pattern="*.dylib*", dst="lib", src="lib") 
        
     def build(self):
         cmake = CMake(self)
