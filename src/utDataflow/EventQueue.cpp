@@ -447,6 +447,13 @@ void EventQueue::threadFunction()
 			}
 #endif
 
+#ifdef HAVE_USDT
+			UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
+											   messagePriority,
+											   pReceiverInfo->pPort->getComponent().getName().c_str(),
+											   pReceiverInfo->pPort->getName().c_str());
+#endif
+
 #ifdef HAVE_ETW
 			int64 _startTime = ETWUbitrackEventQueueDispatchBegin(m_eventDomain, messagePriority, 
 																  pReceiverInfo->pPort->getComponent().getName().c_str(),
@@ -488,6 +495,13 @@ void EventQueue::threadFunction()
 												 pReceiverInfo->pPort->getComponent().getName().c_str(),
 												 pReceiverInfo->pPort->getName().c_str());
 			}
+#endif
+
+#ifdef HAVE_USDT
+			UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
+											 messagePriority,
+											 pReceiverInfo->pPort->getComponent().getName().c_str(),
+											 pReceiverInfo->pPort->getName().c_str());
 #endif
 
 
