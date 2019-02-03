@@ -40,7 +40,7 @@
 
 // defaults to one eventqueue by default
 #ifndef UT_MAXIMUM_EVENTQUEUES
-  #define UT_MAXIMUM_EVENTQUEUES 1
+  #define UT_MAXIMUM_EVENTQUEUES 4
 #endif
 
 // get loggers
@@ -316,7 +316,7 @@ void EventQueue::dispatchNow()
 		int64 ___ubitrack_tracing_startTime = 0;
 #endif
         if (pReceiverInfo) {
-            TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain, messagePriority,
+            TRACEPOINT_EVENTQUEUE_BLOCK_DISPATCH_BEGIN(m_eventDomain, messagePriority,
             pReceiverInfo->pPort->getComponent().getName().c_str(), pReceiverInfo->pPort->getName().c_str())
         }
 #endif
@@ -348,7 +348,7 @@ void EventQueue::dispatchNow()
 
 #ifdef ENABLE_EVENT_TRACING
         if (pReceiverInfo) {
-            TRACEPOINT_BLOCK_EVENTQUEUE_DISPATCH_END(m_eventDomain, messagePriority,
+            TRACEPOINT_EVENTQUEUE_BLOCK_DISPATCH_END(m_eventDomain, messagePriority,
             pReceiverInfo->pPort->getComponent().getName().c_str(), pReceiverInfo->pPort->getName().c_str())
         }
 #endif
@@ -448,10 +448,10 @@ void EventQueue::threadFunction()
 #endif
 
 #ifdef HAVE_USDT
-			UBITRACK_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
-											   messagePriority,
-											   pReceiverInfo->pPort->getComponent().getName().c_str(),
-											   pReceiverInfo->pPort->getName().c_str());
+			TRACEPOINT_EVENTQUEUE_DISPATCH_BEGIN(m_eventDomain,
+											     messagePriority,
+											     pReceiverInfo->pPort->getComponent().getName().c_str(),
+											     pReceiverInfo->pPort->getName().c_str());
 #endif
 
 #ifdef HAVE_ETW
@@ -498,10 +498,10 @@ void EventQueue::threadFunction()
 #endif
 
 #ifdef HAVE_USDT
-			UBITRACK_EVENTQUEUE_DISPATCH_END(m_eventDomain,
-											 messagePriority,
-											 pReceiverInfo->pPort->getComponent().getName().c_str(),
-											 pReceiverInfo->pPort->getName().c_str());
+			TRACEPOINT_EVENTQUEUE_DISPATCH_END(m_eventDomain,
+											   messagePriority,
+											   pReceiverInfo->pPort->getComponent().getName().c_str(),
+											   pReceiverInfo->pPort->getName().c_str());
 #endif
 
 
