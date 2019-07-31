@@ -12,21 +12,28 @@ class UbitrackCoreConan(ConanFile):
     short_paths = True
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    options = {"shared": [True, False]}
-    requires = (
-        "ubitrack_core/%s@ubitrack/stable" % version,
-       )
+    options = {"shared": [True, False],
+               "workspaceBuild" : [True, False]}
 
-    default_options = (
-        "shared=True",
-        )
+    default_options = {
+        "shared" :True,
+        "workspaceBuild" : False
+        }
 
     # all sources are deployed with the package
     exports_sources = "doc/*", "src/*", "CMakeLists.txt", "utdataflowConfig.cmake"
 
+    def requirements(self):
+        userChannel = "ubitrack/stable"
+        if self.options.workspaceBuild:
+            userChannel = "local/dev"
+        self.requires("ubitrack_core/%s@%s" % (self.version, userChannel) )
+     
+
     def configure(self):
         if self.options.shared:
             self.options['ubitrack_core'].shared = True
+
 
     # def imports(self):
     #     self.copy(pattern="*.dll", dst="bin", src="bin") # From bin to bin
