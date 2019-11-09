@@ -54,7 +54,7 @@ class Port;
  * It maintains a map of all ports that belong to it.
  */
 class UTDATAFLOW_EXPORT Component
-	: private boost::noncopyable
+	: public boost::enable_shared_from_this<Component>, private boost::noncopyable
 {
 public:
 	/**
@@ -176,6 +176,18 @@ protected:
 	 * for applications which integrate multiple dataflows.
 	 */
 	unsigned int m_eventDomain;
+
+	/**
+	 * This method can be used to get a shared-pointer to this from derived classes
+	 * @tparam Derived
+	 * @return a shared pointer for the subclass of this component
+	 */
+    template <typename Derived>
+    boost::shared_ptr<Derived> shared_from_base()
+    {
+        return boost::static_pointer_cast<Derived>(shared_from_this());
+    }
+
 };
 
 

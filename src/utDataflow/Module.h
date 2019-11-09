@@ -65,7 +65,7 @@ namespace Ubitrack { namespace Dataflow {
  */
 template< class ModuleKeyT, class ComponentKeyT, class ModuleClassT, class ComponentClassT >
 class Module
-	: private boost::noncopyable
+: public boost::enable_shared_from_this<Module<ModuleKeyT, ComponentKeyT, ModuleClassT, ComponentClassT>>, private boost::noncopyable
 {
 public:
 	// copy template parameters to class definition for usage by external and derived classes
@@ -444,6 +444,18 @@ protected:
 	virtual boost::shared_ptr< ComponentClass > createComponent( const std::string&, const std::string& name, boost::shared_ptr< Graph::UTQLSubgraph> subgraph,
 		const ComponentKey& key, ModuleClass* pModule )
 	{ return boost::shared_ptr< ComponentClass >( new ComponentClass( name, subgraph, key, pModule ) ); }
+
+    /**
+     * This method can be used to get a shared-pointer to this from derived classes
+     * @tparam Derived
+     * @return a shared pointer for the subclass of this module
+     */
+    template <typename Derived>
+    boost::shared_ptr<Derived> shared_from_base()
+    {
+        return boost::static_pointer_cast<Derived>(this->shared_from_this());
+    }
+
 };
 
 
