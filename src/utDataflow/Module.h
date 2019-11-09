@@ -175,7 +175,7 @@ public:
 
 			// create new module if necessary
 			if ( !m_moduleMap[ key ] )
-				m_moduleMap[ key ] = new ModuleClass( key, subgraph, this );
+				m_moduleMap[ key ] = boost::shared_ptr<ModuleClass>(new ModuleClass( key, subgraph, this ));
 
 			// create new component
 			// FIXME: what happens when an exception is thrown? We could have a module without a component...
@@ -190,7 +190,7 @@ public:
 
 	protected:
 		// map where we store our modules
-		typedef std::map< ModuleKey, ModuleClass* > ModuleMap;
+		typedef std::map< ModuleKey, boost::shared_ptr<ModuleClass> > ModuleMap;
 		ModuleMap m_moduleMap;
 	};
 
