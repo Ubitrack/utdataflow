@@ -330,7 +330,8 @@ public:
 		if ( bDelete )
 		{
 			m_pFactory->unregisterModule( m_moduleKey );
-			delete this;
+			// since modules are held as shared-ptrs, they will be deleted automatically now..
+			// delete this;
 		}
 	}
 
